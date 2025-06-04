@@ -13,6 +13,7 @@ library(primer.data)
 library(tidymodels)
 library(gtsummary)
 library(equatiomatic)
+library(marginaleffects)
 ```
 
 ```{r}
@@ -25,7 +26,27 @@ x <- nhanes |>
   slice_sample(n = 50, by = sex)
 ```
 
-Men and women have different average heights. We analyze this using data from the National Health and Nutrition Examination Survey. Because this survey is voluntary, there may be a potential bias or uncertainty.  We model height as a linear function of sex.
+```{r}
+#| label: plot
+plot_comparisons(fit_height,
+                variables = "sex",
+                type = "numeric",
+                condition = "sex") + 
+  labs(title = "Height Difference Between Men and Women",
+       subtitle = "We are 95% confident that the real value of the difference in average height \nlies between 10.7 and 16.8 cm",
+       caption = "Data from a sample of 100 individuals from NHANES",
+       x = NULL, 
+       y = "Expected height difference (cm)")
+```
+
+Men and women vary in height. Using data from the National Health and Nutrition Examination Survey conducted from 2009 to 2011 by the Centers for Disease Control and Prevention, we seek to estimate the average height of men and women. Since the participation for the survey is voluntary, it could mean that, for example, taller people are more likely to answer this question, thus reduces representativeness of the data. We model height as a linear function of sex. Our best guest for the average height of women is 161 cm, we are 95% confident that its true value is between 158 and 164 while men, on average, are expected to be taller in women by 14 cm, and we are also 95% confident that the real value of differences in average height lies between 10.7 and 16.8.
+
+```{r}
+#| label: math
+extract_eq(fit_height, 
+           intercept = "beta", 
+           use_coefs = TRUE)
+```
 
 ```{r}
 #| label: model 
@@ -35,14 +56,9 @@ fit_height <- linear_reg(engine = "lm") |>
 ```
 
 ```{r}
-#| label: math
-extract_eq(fit_height, 
-           intercept = "beta", 
-           use_coefs = TRUE)
-```
-
-
-```{r}
 #| label: table
 tbl_regression(fit_height)
 ```
+
+
+
