@@ -10,6 +10,9 @@ execute:
 #| message: false
 library(tidyverse)
 library(primer.data)
+library(tidymodels)
+library(gtsummary)
+library(equatiomatic)
 ```
 
 ```{r}
@@ -22,4 +25,24 @@ x <- nhanes |>
   slice_sample(n = 50, by = sex)
 ```
 
-Men and women have different average heights. We analyze this using data from the National Health and Nutrition Examination Survey. Because this survey is voluntary, there may be a potential bias or uncertainty.
+Men and women have different average heights. We analyze this using data from the National Health and Nutrition Examination Survey. Because this survey is voluntary, there may be a potential bias or uncertainty.  We model height as a linear function of sex.
+
+```{r}
+#| label: model 
+#| cache: true
+fit_height <- linear_reg(engine = "lm") |>
+  fit(height ~ sex, data = x)
+```
+
+```{r}
+#| label: math
+extract_eq(fit_height, 
+           intercept = "beta", 
+           use_coefs = TRUE)
+```
+
+
+```{r}
+#| label: table
+tbl_regression(fit_height)
+```
