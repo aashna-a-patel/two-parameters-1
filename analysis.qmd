@@ -1,0 +1,25 @@
+---
+title: "Two-Parameters"
+format: html
+execute:
+    echo: false
+---
+
+```{r}
+#| label: setup
+#| message: false
+library(tidyverse)
+library(primer.data)
+```
+
+```{r}
+set.seed(10)
+
+x <- nhanes |> 
+  filter(age >= 18) |> 
+  select(height, sex) |> 
+  drop_na() |> 
+  slice_sample(n = 50, by = sex)
+```
+
+Men and women have different average heights. We analyze this using data from the National Health and Nutrition Examination Survey. Because this survey is voluntary, there may be a potential bias or uncertainty.
